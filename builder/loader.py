@@ -3,11 +3,10 @@
 def load(transformation):
     # Loop through every receipt that we have -- one may have more than one event.
     for receipt in transformation:
-
         # Loop through all of the events in each receipt.
         for log in receipt:
-            print(log.blockNumber)
+            # print(log.blockNumber)
             # print(log.address)
-            # print(log.args)
+            print(log.args)
 
             # TODO: use the name of the event to send them to the right place.

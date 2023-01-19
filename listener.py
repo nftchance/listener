@@ -14,8 +14,12 @@ class Listener:
 
         self.w3 = get_w3()
 
+        self.running = True
+
+        self.items_processed = 0
+
     def run(self):
-        while True:
+        while self.running:
             self.extraction_data += extract(self.w3)
 
             if self.extraction_data:
@@ -47,25 +51,27 @@ class Listener:
         for thread in threads:
             thread.join()
 
+    def _format_data_bucket(self, field):
+        data = field[:100]
+        field = field[100:]
+
+        return data, field
+
     def extraction(self):
-        while True:
+        while self.running:
             self.extraction_data += extract(self.w3)
 
     def transformation(self):
-        while True:
+        while self.running:
             if self.extraction_data:
-                data = self.extraction_data[:100]
-
-                self.extraction_data = self.extraction_data[100:]
+                (data, self.extraction_data) = self._format_data_bucket(self.extraction_data)
 
                 self.transformation_data += transform(data)
 
     def loading(self):
-        while True:
+        while self.running:
             if self.transformation_data:
-                data = self.transformation_data[:100]
-
-                self.transformation_data = self.transformation_data[100:]
+                (data, self.transformation_data) = self._format_data_bucket(self.transformation_data)
 
                 load(data)
 
